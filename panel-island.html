@@ -1,0 +1,256 @@
+import React, { useState } from 'react';
+import { Phone, Bell, MessageCircle, Music, X, Settings, Palette, Smartphone, FlaskConical, RefreshCw, User, ChevronRight, Home } from 'lucide-react';
+
+export default function PanelIslandApp() {
+  const [pantalla, setPantalla] = useState('home'); // home, personalizacion, apps, prueba, actualizaciones, config, perfil
+  const [panelIslandAbierto, setPanelIslandAbierto] = useState(false);
+  const [appExpandida, setAppExpandida] = useState(null);
+  const [numApps, setNumApps] = useState(4);
+
+  const apps = [
+    { id: 'discord', nombre: 'Discord', icono: Phone, color: 'bg-indigo-500', info: { titulo: 'Llamada activa', detalle: 'Usuario#1234', tiempo: '00:45' }},
+    { id: 'alarma', nombre: 'Alarma', icono: Bell, color: 'bg-orange-500', info: { titulo: 'Sonando ahora', detalle: 'Despertar', tiempo: '07:00 AM' }},
+    { id: 'mensaje', nombre: 'WhatsApp', icono: MessageCircle, color: 'bg-green-500', info: { titulo: '3 mensajes', detalle: 'María, Juan', tiempo: 'Hace 2 min' }},
+    { id: 'tiktok', nombre: 'TikTok', icono: Music, color: 'bg-pink-500', info: { titulo: 'Nuevo video', detalle: '@usuario', tiempo: 'Hace 5 min' }}
+  ];
+
+  const appsActivas = apps.slice(0, numApps);
+
+  // ========== PANEL ISLAND (PREVIEW ARRIBA) ==========
+  const PanelIslandPreview = () => (
+    <div className="bg-gradient-to-b from-sky-300 to-sky-200 p-6 rounded-t-3xl">
+      <div className="flex justify-center items-center gap-2 mb-4">
+        {/* Apps izquierda */}
+        {appsActivas.slice(0, 2).map(app => (
+          <button
+            key={app.id}
+            onClick={() => setAppExpandida(appExpandida === app.id ? null : app.id)}
+            className={`relative transition-all ${appExpandida === app.id ? 'scale-0' : 'scale-100'}`}
+          >
+            <div className={`${app.color} w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 border-white/40`}>
+              <app.icono className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white"></div>
+            </div>
+          </button>
+        ))}
+
+        {/* Píldora central */}
+        <div className="bg-black w-20 h-6 rounded-full shadow-2xl mx-1"></div>
+
+        {/* Apps derecha */}
+        {appsActivas.slice(2, 3).map(app => (
+          <button
+            key={app.id}
+            onClick={() => setAppExpandida(appExpandida === app.id ? null : app.id)}
+            className={`relative transition-all ${appExpandida === app.id ? 'scale-0' : 'scale-100'}`}
+          >
+            <div className={`${app.color} w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 border-white/40`}>
+              <app.icono className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white"></div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Expansión */}
+      {appExpandida && (
+        <div className="mt-4 animate-slideDown">
+          {(() => {
+            const app = appsActivas.find(a => a.id === appExpandida);
+            return (
+              <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border-2 border-white/40 overflow-hidden max-w-xs mx-auto">
+                <div className={`${app.color} p-4 flex items-center gap-3`}>
+                  <div className="bg-white/20 p-2 rounded-xl">
+                    <app.icono className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-white font-bold">{app.info.titulo}</h3>
+                    <p className="text-white/80 text-sm">{app.info.detalle}</p>
+                  </div>
+                  <button onClick={() => setAppExpandida(null)} className="bg-white/20 p-1.5 rounded-full">
+                    <X className="w-4 h-4 text-white" strokeWidth={3} />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`text-2xl font-bold ${app.color.replace('bg-', 'text-')}`}>{app.info.tiempo}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className={`flex-1 ${app.color} text-white py-2 rounded-xl text-sm font-bold`}>Acción</button>
+                    <button className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl text-sm font-bold">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      <p className="text-center text-xs text-gray-600 mt-4">Preview - Panel Island</p>
+    </div>
+  );
+
+  // ========== MENÚ PRINCIPAL ==========
+  if (!panelIslandAbierto) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {/* Preview arriba */}
+        <PanelIslandPreview />
+
+        {/* App abajo */}
+        <div className="p-6">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Panel Island</h1>
+            <p className="text-gray-400">Toca para configurar</p>
+          </div>
+
+          <button
+            onClick={() => setPanelIslandAbierto(true)}
+            className="w-full max-w-md mx-auto block bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-6 rounded-3xl shadow-2xl hover:scale-105 transition-transform"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 p-3 rounded-2xl">
+                  <Settings className="w-8 h-8" />
+                </div>
+                <div className="text-left">
+                  <h2 className="text-xl font-bold">Abrir Panel Island</h2>
+                  <p className="text-cyan-100 text-sm">Configuración y ajustes</p>
+                </div>
+              </div>
+              <ChevronRight className="w-6 h-6" />
+            </div>
+          </button>
+
+          {/* Controles de demo */}
+          <div className="mt-8 bg-yellow-500/20 border border-yellow-500 rounded-2xl p-4 max-w-md mx-auto">
+            <p className="text-yellow-400 text-sm font-bold mb-3">🔧 DEMO - Simular apps:</p>
+            <div className="flex gap-2 justify-center">
+              {[0, 1, 2, 3, 4].map(n => (
+                <button
+                  key={n}
+                  onClick={() => { setNumApps(n); setAppExpandida(null); }}
+                  className={`w-10 h-10 rounded-lg font-bold transition-all ${
+                    numApps === n ? 'bg-yellow-500 text-black' : 'bg-white/10 text-white hover:bg-white/20'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ========== MENÚ DE CONFIGURACIÓN ==========
+  const menuItems = [
+    { id: 'personalizacion', icono: Palette, titulo: 'Personalización', desc: 'Colores, transparencia, temas', color: 'from-pink-500 to-rose-600' },
+    { id: 'apps', icono: Smartphone, titulo: 'Apps permitidas', desc: 'Activar/desactivar apps', color: 'from-blue-500 to-cyan-600' },
+    { id: 'prueba', icono: FlaskConical, titulo: 'Prueba de Island', desc: 'Tutorial interactivo', color: 'from-purple-500 to-indigo-600' },
+    { id: 'actualizaciones', icono: RefreshCw, titulo: 'Actualizaciones', desc: 'Novedades y changelog', color: 'from-green-500 to-emerald-600' },
+    { id: 'config', icono: Settings, titulo: 'Configuración', desc: 'Ajustes avanzados', color: 'from-orange-500 to-amber-600' },
+    { id: 'perfil', icono: User, titulo: 'Perfil', desc: 'Cuenta y preferencias', color: 'from-gray-500 to-slate-600' }
+  ];
+
+  if (pantalla === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {/* Preview arriba */}
+        <PanelIslandPreview />
+
+        {/* Menú */}
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-white">🏝️ Panel Island</h1>
+            <button onClick={() => setPanelIslandAbierto(false)} className="bg-white/10 p-2 rounded-full">
+              <Home className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          <div className="grid gap-3 max-w-md mx-auto">
+            {menuItems.map(item => (
+              <button
+                key={item.id}
+                onClick={() => setPantalla(item.id)}
+                className={`bg-gradient-to-r ${item.color} p-4 rounded-2xl shadow-xl hover:scale-105 transition-transform text-left`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-xl">
+                    <item.icono className="w-6 h-6 text-white" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-white font-bold text-lg">{item.titulo}</h3>
+                    <p className="text-white/80 text-sm">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Versión */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-400 text-sm">Versión 0.1 Beta</p>
+            <p className="text-gray-500 text-xs mt-1">Dynamic Island para Android</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ========== PANTALLAS INTERNAS ==========
+  const screenTitle = menuItems.find(i => i.id === pantalla)?.titulo || 'Pantalla';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      {/* Preview arriba */}
+      <PanelIslandPreview />
+
+      {/* Contenido */}
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-6">
+          <button onClick={() => setPantalla('home')} className="bg-white/10 p-2 rounded-full">
+            <ChevronRight className="w-5 h-5 text-white rotate-180" />
+          </button>
+          <h1 className="text-2xl font-bold text-white">{screenTitle}</h1>
+        </div>
+
+        <div className="max-w-md mx-auto bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10">
+          <div className="text-center">
+            <div className="bg-gradient-to-br from-cyan-400 to-blue-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              {React.createElement(menuItems.find(i => i.id === pantalla)?.icono || Settings, { className: 'w-10 h-10 text-white', strokeWidth: 2 })}
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">{screenTitle}</h2>
+            <p className="text-gray-400 mb-6">Sección en desarrollo</p>
+            <div className="bg-white/5 rounded-2xl p-4 mb-4">
+              <p className="text-gray-300 text-sm">
+                {pantalla === 'personalizacion' && 'Aquí podrás personalizar colores, transparencia e imágenes de fondo.'}
+                {pantalla === 'apps' && 'Aquí podrás activar/desactivar qué apps aparecen en el Panel Island.'}
+                {pantalla === 'prueba' && 'Tutorial interactivo para probar todas las funciones del Panel Island.'}
+                {pantalla === 'actualizaciones' && 'Novedades, changelog y sistema de actualizaciones automáticas.'}
+                {pantalla === 'config' && 'Ajustes avanzados del Panel Island.'}
+                {pantalla === 'perfil' && 'Gestión de cuenta, estado VIP y preferencias.'}
+              </p>
+            </div>
+            <button
+              onClick={() => setPantalla('home')}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity"
+            >
+              Volver al menú
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slideDown { animation: slideDown 0.3s ease-out; }
+      `}</style>
+    </div>
+  );
+}
